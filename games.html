@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FlatGG - Game Site</title>
+  <style>
+    /* Global Styles */
+    body {
+      background-color: #1a1a1a;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      background-color: #333333;
+      padding: 10px;
+    }
+
+    .navbar ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar ul li {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .navbar ul li a {
+      color: #ffffff;
+      text-decoration: none;
+      padding: 5px;
+    }
+
+    /* Game Card Styles */
+    .game-cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .game-card {
+      background-color: #2b2b2b;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      margin: 20px;
+      width: calc(33.33% - 40px); /* Three cards per row */
+      box-sizing: border-box;
+    }
+
+    .game-card h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .game-card p {
+      font-size: 14px;
+    }
+
+    /* Search Bar Styles */
+    .search-bar {
+      margin: 20px;
+    }
+
+    .search-bar input[type="text"] {
+      padding: 5px;
+      width: 200px;
+    }
+
+    /* Fullscreen Iframe Styles */
+    .fullscreen-iframe {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .fullscreen-iframe iframe {
+      width: 93%;
+      height: 93%;
+    }
+
+.play-button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  background-color: #4CAF50;
+  color: #ffffff;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.play-button:hover {
+  background-color: #45a049;
+}
+
+    .menu-container {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 9999;
+    }
+
+    .menu-options {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      margin-top: 5px;
+    }
+
+    .menu-option {
+  width: 30px;
+  height: 30px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black; /* Added property to make text black */
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.menu-option:hover {
+    transform: scale(1.1);
+}
+
+.menu-icon, .menu-option {
+  text-align: center; /* Added property to center the text */
+}
+
+    .menu-button {
+      width: 30px;
+      height: 30px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black; /* Added property to make text black */
+  transition: transform 0.1s ease;
+    }
+    
+    .menu-button:hover {
+    transform: scale(1.1);
+}
+    
+    .menu-button, .menu-option {
+  text-align: center; /* Added property to center the text */
+}
+
+
+    .menu-options {
+      position: absolute;
+      top: calc(100% + 5px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Games</a></li>
+      <li><a href="#">Apps</a></li>
+      <li><a href="#">Utilities</a></li>
+    </ul>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search games...">
+  </div>
+
+  <div class="game-cards-container" id="gameCardsContainer">
+    <!-- Game Cards -->
+  </div>
+
+  <div class="fullscreen-iframe" id="fullscreenIframeContainer" style="display: none;">
+    <div class="menu-container">
+  <div class="menu-button" id="menuButton">
+  <div class="menu-icon">&#10005;</div>
+</div>
+  <div class="menu-options">
+    <div class="menu-option" id="option1">&#8635;</div>
+    <div class="menu-option" id="fullscreenButton">&#10064;</div>
+  </div>
+</div>
+
+    <iframe id="fullscreenIframe" src="" frameborder="0"></iframe>
+  </div>
+
+  <script>
+    // Sample game data
+const games = [
+  { title: "Minecraft", description: "The classic sandbox game.", url: "https://ubg100.github.io/games/eaglercraft/index.html" },
+  { title: "Game 2", description: "The amazing puzzle game.", url: "https://1v1.lol/" },
+  { title: "Game 3", description: "The original card game.", url: "https://slither.io/" },
+  // Add more game data as needed
+];
+
+// Function to generate game cards
+function generateGameCards() {
+  const container = document.getElementById("gameCardsContainer");
+  container.innerHTML = "";
+
+  games.forEach(game => {
+    const card = document.createElement("div");
+    card.className = "game-card";
+    card.innerHTML = `
+      <h2>${game.title}</h2>
+      <p>${game.description}</p>
+      <button class="play-button" data-url="${game.url}">Play</button>
+    `;
+    container.appendChild(card);
+  });
+
+  // Add event listeners to play buttons
+  const playButtons = document.getElementsByClassName("play-button");
+  Array.from(playButtons).forEach(button => {
+    button.addEventListener("click", openFullscreenIframe);
+  });
+}
+
+// Function to filter game cards based on search input
+function filterGameCards() {
+  const searchInput = document.getElementById("searchInput");
+  const searchTerm = searchInput.value.toLowerCase();
+  const filteredGames = games.filter(game => game.title.toLowerCase().includes(searchTerm));
+
+  const container = document.getElementById("gameCardsContainer");
+  container.innerHTML = "";
+
+  filteredGames.forEach(game => {
+    const card = document.createElement("div");
+    card.className = "game-card";
+    card.innerHTML = `
+      <h2>${game.title}</h2>
+      <p>${game.description}</p>
+      <button class="play-button" data-url="${game.url}">Play</button>
+    `;
+    container.appendChild(card);
+  });
+
+  // Add event listeners to play buttons
+  const playButtons = document.getElementsByClassName("play-button");
+  Array.from(playButtons).forEach(button => {
+    button.addEventListener("click", openFullscreenIframe);
+  });
+}
+
+// Event listener for search input
+const searchInput = document.getElementById("searchInput");
+searchInput.addEventListener("input", filterGameCards);
+
+// Generate game cards on page load
+generateGameCards();
+
+// Function to open fullscreen iframe
+function openFullscreenIframe(event) {
+  const url = event.target.dataset.url;
+  const fullscreenIframeContainer = document.getElementById("fullscreenIframeContainer");
+  const fullscreenIframe = document.getElementById("fullscreenIframe");
+  const menuButton = document.getElementById("menuButton");
+
+  fullscreenIframe.src = url;
+  fullscreenIframeContainer.style.display = "flex";
+
+  menuButton.addEventListener("click", toggleMenuOptions);
+}
+
+const closeButton = document.getElementById("menuButton");
+closeButton.addEventListener("click", closeFullscreenIframe);
+
+function closeFullscreenIframe() {
+  const fullscreenIframe = document.getElementById("fullscreenIframeContainer");
+  const fullscreenIframeReal = document.getElementById("fullscreenIframe");
+  fullscreenIframe.style.display = "none";
+  fullscreenIframeReal.src = "about:blank";
+}
+
+const fullscreenButton = document.getElementById("fullscreenButton");
+fullscreenButton.addEventListener("click", toggleFullscreen);
+
+function toggleFullscreen() {
+  const fullscreenIframe = document.getElementById("fullscreenIframe");
+
+  if (!document.fullscreenElement) {
+    if (fullscreenIframe.requestFullscreen) {
+      fullscreenIframe.requestFullscreen();
+    } else if (fullscreenIframe.mozRequestFullScreen) { // Firefox
+      fullscreenIframe.mozRequestFullScreen();
+    } else if (fullscreenIframe.webkitRequestFullscreen) { // Chrome, Safari and Opera
+      fullscreenIframe.webkitRequestFullscreen();
+    } else if (fullscreenIframe.msRequestFullscreen) { // IE/Edge
+      fullscreenIframe.msRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) { // Firefox
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) { // Chrome, Safari and Opera
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) { // IE/Edge
+      document.msExitFullscreen();
+    }
+  }
+}
+
+function reloadIframe() {
+  const fullscreenIframe = document.getElementById("fullscreenIframe");
+  fullscreenIframe.src = fullscreenIframe.src;
+}
+
+const option3 = document.getElementById("option1");
+option3.addEventListener("click", reloadIframe);
+  </script>
+</body>
+</html>
